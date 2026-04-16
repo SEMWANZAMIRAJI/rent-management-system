@@ -1,0 +1,173 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+
+<style>
+body { font-family: 'Jost', sans-serif; }
+</style>
+
+</head>
+
+<body class="bg-gray-100">
+
+<!-- 🔥 TOAST MESSAGES -->
+{% if messages %}
+<div class="fixed top-5 left-1/2 transform -translate-x-1/2 z-50 space-y-2">
+
+{% for message in messages %}
+<div class="px-6 py-3 rounded-xl shadow-lg text-white font-medium
+{% if message.tags == 'success' %} bg-green-500
+{% elif message.tags == 'error' %} bg-red-500
+{% else %} bg-gray-800 {% endif %}">
+{{ message }}
+</div>
+{% endfor %}
+
+</div>
+
+<script>
+setTimeout(() => {
+    document.querySelectorAll('[class*="bg-"]').forEach(el => {
+        el.style.opacity = '0';
+        setTimeout(() => el.remove(), 500);
+    });
+}, 2500);
+</script>
+{% endif %}
+
+<!-- 📱 MOBILE TOP BAR -->
+<div class="lg:hidden flex items-center justify-between p-4 text-white sidebar">
+    <h1 class="text-lg font-bold">Elshaddai</h1>
+    <button onclick="toggleSidebar()" class="text-2xl">
+        <i class="fa fa-bars"></i>
+    </button>
+</div>
+
+<div class="flex h-screen">
+
+    <!-- 🌑 OVERLAY -->
+    <div id="overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 hidden z-40 lg:hidden"
+        onclick="toggleSidebar()"></div>
+
+    <!-- 📌 SIDEBAR -->
+    <aside id="sidebar"
+        class="sidebar w-64 text-white flex flex-col
+        fixed lg:static inset-y-0 left-0 z-50 transform -translate-x-full lg:translate-x-0
+        transition-transform duration-300">
+
+        <!-- LOGO -->
+        <div class="p-6 flex items-center space-x-3 border-b border-white/20">
+            <img src="{% static 'images/logo.png' %}" class="w-10">
+            <h1 class="text-xl font-bold">Elshaddai</h1>
+        </div>
+
+        <!-- MENU -->
+        <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
+
+            <a href="{% url 'tenants:dashboard' %}" class="menu-item">
+                <i class="fa fa-home mr-2"></i> Dashboard
+            </a>
+
+            {% if request.user.userprofile.role == "landlord" %}
+
+            <!-- TENANTS -->
+            <div>
+                <button class="menu-item submenu-toggle flex justify-between w-full">
+                    <span><i class="fa fa-users mr-2"></i> Tenants</span>
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+                <div class="submenu hidden ml-4 mt-2 space-y-1">
+                    <a href="{% url 'tenants:add' %}" class="submenu-item">Add Tenant</a>
+                    <a href="{% url 'tenants:list' %}" class="submenu-item">View Tenants</a>
+                </div>
+            </div>
+
+            <!-- PROPERTIES -->
+            <div>
+                <button class="menu-item submenu-toggle flex justify-between w-full">
+                    <span><i class="fa fa-building mr-2"></i> Properties</span>
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+                <div class="submenu hidden ml-4 mt-2 space-y-1">
+                    <a href="{% url 'houses:add' %}" class="submenu-item">Add Property</a>
+                    <a href="{% url 'houses:list' %}" class="submenu-item">Property List</a>
+                </div>
+            </div>
+
+            <!-- PAYMENTS -->
+            <div>
+                <button class="menu-item submenu-toggle flex justify-between w-full">
+                    <span><i class="fa fa-money-bill mr-2"></i> Payments</span>
+                    <i class="fa fa-chevron-down"></i>
+                </button>
+                <div class="submenu hidden ml-4 mt-2 space-y-1">
+                    <a href="{% url 'payments:add' %}" class="submenu-item">Record Payment</a>
+                    <a href="{% url 'payments:list' %}" class="submenu-item">Payment History</a>
+                </div>
+            </div>
+
+            <a href="{% url 'contracts:list' %}" class="menu-item">
+                <i class="fa fa-file-contract mr-2"></i> Contracts
+            </a>
+
+            <a href="{% url 'notifications:list' %}" class="menu-item">
+                <i class="fa fa-bell mr-2"></i> Notifications
+            </a>
+
+            {% else %}
+
+            <a href="{% url 'contracts:list' %}" class="menu-item">My Contracts</a>
+            <a href="{% url 'payments:list' %}" class="menu-item">My Payments</a>
+            <a href="{% url 'notifications:list' %}" class="menu-item">Notifications</a>
+
+            {% endif %}
+
+        </nav>
+
+        <!-- LOGOUT -->
+        <div class="p-4 border-t border-white/20">
+            <a href="{% url 'tenants:logout' %}" class="menu-item text-red-300">
+                <i class="fa fa-sign-out-alt mr-2"></i> Logout
+            </a>
+        </div>
+
+    </aside>
+
+    <!-- 📄 MAIN CONTENT -->
+    <main class="flex-1 p-4 lg:p-6 overflow-y-auto w-full">
+        {% block content %}{% endblock %}
+    </main>
+
+</div>
+
+<!-- JS -->
+<script>
+function toggleSidebar(){
+    document.getElementById('sidebar').classList.toggle('-translate-x-full');
+    document.getElementById('overlay').classList.toggle('hidden');
+}
+
+// submenu
+document.querySelectorAll('.submenu-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+        btn.nextElementSibling.classList.toggle('hidden');
+    });
+});
+</script>
+
+</body>
+</html>

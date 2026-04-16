@@ -1,0 +1,37 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-2xl mx-auto">
+
+<h1 class="text-2xl font-bold mb-6">Notifications</h1>
+
+<div class="space-y-4">
+
+{% for n in notifications %}
+<div class="p-4 rounded shadow
+{% if not n.is_read %}bg-blue-50{% else %}bg-white{% endif %}">
+
+<div class="flex justify-between items-center">
+<h3 class="font-semibold">{{ n.title }}</h3>
+
+{% if not n.is_read %}
+<a href="{% url 'notifications:read' n.id %}" 
+   class="text-sm text-blue-600">Mark as read</a>
+{% endif %}
+</div>
+
+<p class="text-sm text-gray-600">{{ n.message }}</p>
+
+<p class="text-xs text-gray-400 mt-2">{{ n.created_at }}</p>
+
+</div>
+
+{% empty %}
+<p class="text-center text-gray-500">No notifications</p>
+{% endfor %}
+
+</div>
+
+</div>
+
+{% endblock %}

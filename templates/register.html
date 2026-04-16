@@ -1,0 +1,111 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link href="https://fonts.googleapis.com/css2?family=Jost:wght@100;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{% static 'css/register.css' %}">
+</head>
+
+<body>
+
+<div class="w-full max-w-md p-6 mx-auto">
+
+<!-- Logo -->
+<div class="text-center mb-8">
+    <div class="inline-block p-4 rounded-2xl logo-box shadow-lg mb-4">
+        <img src="{% static 'images/logo.png' %}" class="w-12" alt="Logo">
+    </div>
+    <h1 class="title-main font-bold text-white">Elshaddai</h1>
+    <p class="text-white/80 subtitle">Create Your Account</p>
+</div>
+
+<!-- Card -->
+<div class="glass-card shadow-2xl">
+
+<h2 class="text-2xl text-white font-semibold mb-6 text-center">
+Register
+</h2>
+
+<form method="POST">
+    {% csrf_token %}
+
+    <!-- FULL NAME ✅ -->
+    <div class="mb-5">
+        <label class="text-white text-sm mb-2 block">Full Name</label>
+        <div class="relative">
+            <i class="fa fa-user absolute left-3 top-4 text-white"></i>
+            <input type="text" name="full_name"
+            placeholder="Enter full name"
+            class="input-field w-full pl-10 py-3 rounded-xl text-white placeholder-white/70"
+            required>
+        </div>
+    </div>
+
+    <!-- PHONE -->
+    <div class="mb-5">
+        <label class="text-white text-sm mb-2 block">Phone Number</label>
+        <div class="relative">
+            <i class="fa fa-phone absolute left-3 top-4 text-white"></i>
+            <input type="tel" name="username"
+            placeholder="e.g 0712345678"
+            class="input-field w-full pl-10 py-3 rounded-xl text-white placeholder-white/70"
+            pattern="[0-9]{10}" required>
+        </div>
+    </div>
+
+    <!-- EMAIL ✅ -->
+    <div class="mb-5">
+        <label class="text-white text-sm mb-2 block">Email</label>
+        <div class="relative">
+            <i class="fa fa-envelope absolute left-3 top-4 text-white"></i>
+            <input type="email" name="email"
+            placeholder="Enter email"
+            class="input-field w-full pl-10 py-3 rounded-xl text-white placeholder-white/70">
+        </div>
+    </div>
+
+    <!-- PASSWORD -->
+    <div class="mb-6">
+        <label class="text-white text-sm mb-2 block">Password</label>
+        <div class="relative">
+            <i class="fa fa-lock absolute left-3 top-4 text-white"></i>
+            <input type="password" name="password"
+            placeholder="••••••••"
+            class="input-field w-full pl-10 py-3 rounded-xl text-white placeholder-white/70" required>
+
+            <button type="button" onclick="togglePassword()"
+            class="absolute right-3 top-3 text-white">
+                <i id="toggleIcon" class="fa fa-eye"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- BUTTON -->
+    <button type="submit"
+    class="register-btn w-full py-3 text-white font-bold rounded-xl shadow-lg">
+    Register
+    </button>
+</form>
+
+<div class="mt-6 text-center text-white text-sm">
+Already have an account? 
+<a href="{% url 'tenants:login' %}" class="font-semibold underline">Login</a>
+</div>
+
+</div>
+</div>
+
+<script src="{% static 'js/register.js' %}"></script>
+</body>
+</html>

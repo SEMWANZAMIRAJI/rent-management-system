@@ -1,0 +1,173 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center">
+  <div class="w-full max-w-3xl bg-white p-6 rounded-xl shadow">
+
+    <!-- TITLE -->
+    <h2 class="text-2xl font-bold text-center mb-6">
+      {% if object %} Edit Contract {% else %} Create Contract {% endif %}
+    </h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- Tenant -->
+        <div>
+          <label class="font-medium">Tenant</label>
+          <select name="tenant" id="houseSelect" class="w-full border p-2 rounded">
+            <option value="">Select Tenant</option>
+            {% for t in tenants %}
+              <option value="{{ t.id }}"
+                {% if object and object.tenant.id == t.id %}selected{% endif %}>
+                {{ t.full_name }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- House -->
+        <div>
+          <label class="font-medium">House</label>
+          <select name="house" class="w-full border p-2 rounded">
+            <option value="">Select House</option>
+            {% for h in houses %}
+              <option value="{{ h.id }}"
+                {% if object and object.house.id == h.id %}selected{% endif %}>
+                {{ h.house_number }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <!-- Rent -->
+        <div>
+          <label class="font-medium">Rent Amount</label>
+          <input type="number" name="rent_amount" id="rentInput"
+                 class="w-full border p-2 rounded"
+                 value="{% if object %}{{ object.rent_amount }}{% endif %}">
+        </div>
+
+        <!-- MONTHS (IMPORTANT FIX) -->
+        <div>
+          <label class="font-medium">Contract Months</label>
+          <input type="number" name="months" id="months"
+                 class="w-full border p-2 rounded"
+                 value="{% if object %}{{ object.months }}{% endif %}"
+                 placeholder="e.g 12">
+        </div>
+
+        <!-- START DATE -->
+        <div>
+          <label class="font-medium">Start Date</label>
+          <input type="date" name="start_date"
+                 class="w-full border p-2 rounded"
+                 value="{% if object %}{{ object.start_date|date:'Y-m-d' }}{% endif %}">
+        </div>
+
+        <!-- END DATE -->
+        <div>
+          <label class="font-medium">End Date</label>
+          <input type="date" name="end_date"
+                 class="w-full border p-2 rounded"
+                 value="{% if object %}{{ object.end_date|date:'Y-m-d' }}{% endif %}">
+        </div>
+
+      </div>
+
+      <!-- SUBMIT -->
+      <button type="submit"
+              class="w-full mt-6 bg-green-600 text-white py-2 rounded hover:bg-green-700">
+        {% if object %} Update Contract {% else %} Save Contract {% endif %}
+      </button>
+
+    </form>
+  </div>
+</div>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const houseSelect = document.getElementById("houseSelect");
+    const rentInput = document.getElementById("rentInput");
+
+    houseSelect.addEventListener("change", function () {
+
+        const houseId = this.value;
+
+        if (!houseId) {
+            rentInput.value = "";
+            return;
+        }
+
+        fetch(`/houses/get-rent/${houseId}/`)
+            .then(response => response.json())
+            .then(data => {
+                rentInput.value = data.rent_price;
+            });
+    });
+
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const monthsInput = document.querySelector('[name="months"]');
+    const startInput = document.querySelector('[name="start_date"]');
+    const endInput = document.querySelector('[name="end_date"]');
+
+    function addMonths(date, months) {
+        let d = new Date(date);
+        d.setMonth(d.getMonth() + parseInt(months));
+        return d;
+    }
+
+    function calculateDates() {
+        let months = parseInt(monthsInput.value);
+
+        if (!months || months <= 0) {
+            startInput.value = "";
+            endInput.value = "";
+            return;
+        }
+
+        let today = new Date();
+
+        let endDate = addMonths(today, months);
+
+        // format YYYY-MM-DD
+        let format = (d) => d.toISOString().split("T")[0];
+
+        startInput.value = format(today);
+        endInput.value = format(endDate);
+    }
+
+    monthsInput.addEventListener("input", calculateDates);
+});
+</script>
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+    const start = document.querySelector('[name="start_date"]');
+    const end = document.querySelector('[name="end_date"]');
+    const months = document.querySelector('#months');
+
+    function calcMonths() {
+        if (start.value && end.value) {
+            let s = new Date(start.value);
+            let e = new Date(end.value);
+
+            let m = (e.getFullYear() - s.getFullYear()) * 12
+                  + (e.getMonth() - s.getMonth());
+
+            months.value = m > 0 ? m : 0;
+        }
+    }
+
+    start.addEventListener("change", calcMonths);
+    end.addEventListener("change", calcMonths);
+});
+</script>
+{% endblock %}

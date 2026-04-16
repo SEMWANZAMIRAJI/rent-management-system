@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center mt-10">
+<div class="card p-6 text-center w-full max-w-md">
+
+<h2 class="text-xl font-bold mb-4">Delete Payment?</h2>
+
+<p class="mb-6">Are you sure you want to delete this payment?</p>
+
+<form method="POST">
+{% csrf_token %}
+<button class="bg-red-500 text-white px-4 py-2 rounded">Delete</button>
+<a href="{% url 'payments:list' %}" class="ml-2 px-4 py-2 bg-gray-300 rounded">Cancel</a>
+</form>
+
+</div>
+</div>
+
+{% endblock %}

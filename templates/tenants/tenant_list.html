@@ -1,0 +1,108 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
+    <h1 class="text-2xl font-bold">Tenants</h1>
+
+    <a href="{% url 'tenants:add' %}"
+       class="bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded shadow">
+        + Add Tenant
+    </a>
+</div>
+
+<!-- 💻 DESKTOP TABLE -->
+<div class="hidden md:block card overflow-x-auto bg-white rounded shadow">
+
+<table class="min-w-full table-auto border-collapse">
+
+    <thead class="bg-gray-100">
+        <tr>
+            <th class="px-4 py-2 text-left font-medium">Name</th>
+            <th class="px-4 py-2 text-left font-medium">Phone</th>
+            <th class="px-4 py-2 text-left font-medium">Email</th>
+            <th class="px-4 py-2 text-left font-medium">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+    {% for t in tenants %}
+        <tr class="border-b hover:bg-gray-50">
+
+            <td class="px-4 py-2">{{ t.full_name }}</td>
+            <td class="px-4 py-2">{{ t.phone }}</td>
+            <td class="px-4 py-2">{{ t.email }}</td>
+
+            <td class="px-4 py-2">
+
+                <div class="flex flex-wrap gap-2">
+
+                    <!-- EDIT -->
+                    <a href="{% url 'tenants:edit' t.id %}"
+                       class="text-blue-600 text-xs px-3 py-1 border border-blue-400 rounded hover:bg-blue-50">
+                       Edit
+                    </a>
+
+                    <!-- DELETE -->
+                    <a href="{% url 'tenants:delete' t.id %}"
+                       class="text-red-600 text-xs px-3 py-1 border border-red-400 rounded hover:bg-red-50">
+                       Delete
+                    </a>
+
+                </div>
+
+            </td>
+
+        </tr>
+    {% empty %}
+        <tr>
+            <td colspan="4" class="px-4 py-6 text-center text-gray-500">
+                No tenants found
+            </td>
+        </tr>
+    {% endfor %}
+
+    </tbody>
+
+</table>
+
+</div>
+
+<!-- 📱 MOBILE CARDS -->
+<div class="md:hidden space-y-4">
+
+{% for t in tenants %}
+<div class="bg-white shadow rounded p-4 border">
+
+    <div class="flex justify-between">
+        <h2 class="font-bold">{{ t.full_name }}</h2>
+        <span class="text-sm text-gray-500">{{ t.phone }}</span>
+    </div>
+
+    <div class="mt-2 text-sm text-gray-700">
+        <p><strong>Email:</strong> {{ t.email }}</p>
+    </div>
+
+    <div class="mt-4 flex flex-wrap gap-2">
+
+        <a href="{% url 'tenants:edit' t.id %}"
+           class="text-blue-600 text-xs px-3 py-1 border border-blue-400 rounded">
+           Edit
+        </a>
+
+        <a href="{% url 'tenants:delete' t.id %}"
+           class="text-red-600 text-xs px-3 py-1 border border-red-400 rounded">
+           Delete
+        </a>
+
+    </div>
+
+</div>
+
+{% empty %}
+<p class="text-center text-gray-500">No tenants found</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

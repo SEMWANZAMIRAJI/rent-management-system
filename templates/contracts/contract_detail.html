@@ -1,0 +1,155 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<style>
+@media print {
+  body * { visibility: hidden; }
+  #print-area, #print-area * { visibility: visible; }
+
+  #print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 30px;
+  }
+
+  .no-print { display: none !important; }
+}
+</style>
+
+<div class="max-w-5xl mx-auto space-y-8">
+
+<!-- ================= CURRENT CONTRACT ================= -->
+<div id="print-area" class="bg-white p-8 rounded-2xl shadow">
+
+    <!-- HEADER -->
+    <div class="flex justify-between items-center border-b pb-4 mb-6 no-print">
+        <div>
+            <h2 class="text-2xl font-bold">Rental Contract</h2>
+            <p class="text-sm text-gray-500">Current Active Contract</p>
+        </div>
+
+        <div class="flex gap-2">
+
+            <a href="{% url 'contracts:export_pdf' contract.id %}"
+               class="bg-red-500 text-white px-4 py-2 rounded">
+               Export PDF
+            </a>
+
+            <button onclick="window.print()"
+                    class="bg-gray-800 text-white px-4 py-2 rounded">
+                Print
+            </button>
+
+        </div>
+    </div>
+
+    <!-- CONTRACT INFO -->
+    <div class="space-y-3 text-gray-700">
+
+        <p>
+            This contract is between
+            <strong>{{ contract.tenant.full_name }}</strong>
+            for house
+            <strong>{{ contract.house.house_number }}</strong>.
+        </p>
+
+        <p><strong>Rent:</strong> TZS {{ contract.rent_amount }}</p>
+        <p><strong>Start Date:</strong> {{ contract.start_date }}</p>
+        <p><strong>End Date:</strong> {{ contract.end_date }}</p>
+
+        <p class="mt-4">
+            Tenant agrees to pay rent on time and maintain property condition.
+        </p>
+
+        <div class="mt-6">
+            Signature: ________________________
+        </div>
+
+    </div>
+</div>
+
+<!-- ================= HISTORY SECTION ================= -->
+<div class="bg-white p-6 rounded-2xl shadow">
+
+    <h3 class="text-xl font-bold mb-4">Contract History</h3>
+
+    {% if history %}
+
+    <!-- DESKTOP -->
+    <div class="hidden md:block overflow-x-auto">
+        <table class="w-full border">
+            <thead class="bg-gray-100">
+                <tr>
+                    <th class="px-3 py-2 text-left">House</th>
+                    <th class="px-3 py-2 text-left">Rent</th>
+                    <th class="px-3 py-2 text-left">Start</th>
+                    <th class="px-3 py-2 text-left">End</th>
+                    <th class="px-3 py-2 text-center">Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                {% for h in history %}
+                <tr class="border-b hover:bg-gray-50">
+
+                    <td class="px-3 py-2">{{ h.house.house_number }}</td>
+                    <td class="px-3 py-2">TZS {{ h.rent_amount }}</td>
+                    <td class="px-3 py-2">{{ h.start_date }}</td>
+                    <td class="px-3 py-2">{{ h.end_date }}</td>
+
+                    <td class="px-3 py-2 text-center">
+                        <a href="{% url 'contracts:detail' h.id %}"
+                           class="text-gray-600 border px-3 py-1 rounded text-xs">
+                           View
+                        </a>
+                    </td>
+
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="md:hidden space-y-3">
+
+        {% for h in history %}
+        <div class="border rounded p-3">
+
+            <div class="flex justify-between">
+                <strong>{{ h.house.house_number }}</strong>
+                <span class="text-sm text-gray-500">TZS {{ h.rent_amount }}</span>
+            </div>
+
+            <p class="text-sm text-gray-600 mt-1">
+                {{ h.start_date }} → {{ h.end_date }}
+            </p>
+
+            <a href="{% url 'contracts:detail' h.id %}"
+               class="inline-block mt-2 text-xs px-3 py-1 border rounded">
+               View
+            </a>
+
+        </div>
+        {% endfor %}
+
+    </div>
+
+    {% else %}
+        <p class="text-gray-500">No contract history found.</p>
+    {% endif %}
+
+</div>
+
+<!-- BACK -->
+<div class="no-print">
+    <a href="{% url 'contracts:list' %}" class="text-blue-500 hover:underline">
+        ← Back to List
+    </a>
+</div>
+
+</div>
+
+{% endblock %}

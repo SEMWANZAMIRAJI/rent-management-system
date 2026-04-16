@@ -1,0 +1,149 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-center">
+  <div class="card w-full max-w-xl p-6">
+
+    <h2 class="text-xl font-bold mb-6 text-center">
+      {% if object %} Edit Payment {% else %} Add Payment {% endif %}
+    </h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <!-- CONTRACT -->
+        <div class="md:col-span-2">
+          <label class="text-sm font-medium">Contract</label>
+          <select id="contract" name="contract" class="input w-full">
+            <option value="">Select Contract</option>
+
+            {% for c in contracts %}
+            <option value="{{ c.id }}"
+                data-rent="{{ c.rent_amount }}"
+                data-start="{{ c.start_date }}"
+                data-end="{{ c.end_date }}"
+                {% if object and object.contract.id == c.id %}selected{% endif %}>
+
+                {{ c.tenant.full_name }} - {{ c.house.house_number }}
+
+            </option>
+            {% endfor %}
+
+          </select>
+        </div>
+
+        <!-- MONTHS -->
+        <div>
+          <label class="text-sm font-medium">Months</label>
+          <input type="number"
+                 id="pay_months"
+                 name="month"
+                 class="input w-full"
+                 placeholder="Number of months"
+                 value="{% if object %}{{ object.month }}{% endif %}">
+        </div>
+
+        <!-- AMOUNT -->
+        <div>
+          <label class="text-sm font-medium">Amount</label>
+          <input type="number"
+                 id="amount_paid"
+                 name="amount_paid"
+                 class="input w-full"
+                 placeholder="Total amount"
+                 value="{% if object %}{{ object.amount_paid }}{% endif %}">
+        </div>
+
+        <!-- METHOD -->
+        <div class="md:col-span-2">
+          <label class="text-sm font-medium">Payment Method</label>
+          <select name="method" class="input w-full">
+            <option value="cash" {% if object and object.method == "cash" %}selected{% endif %}>Cash</option>
+            <option value="mobile" {% if object and object.method == "mobile" %}selected{% endif %}>Mobile Money</option>
+            <option value="bank" {% if object and object.method == "bank" %}selected{% endif %}>Bank</option>
+          </select>
+        </div>
+
+      </div>
+
+      <!-- INFO BOX -->
+      <div class="mt-5 bg-gray-100 p-4 rounded">
+
+        <p>📅 Contract Months: <span id="contract_months">0</span></p>
+        <p>💰 Rent per Month: TZS <span id="rent">0</span></p>
+
+        <p class="font-bold mt-2">
+          🧮 Total: TZS <span id="total">0</span>
+        </p>
+
+      </div>
+
+      <button class="btn mt-4 w-full">
+        {% if object %} Update Payment {% else %} Save Payment {% endif %}
+      </button>
+
+    </form>
+
+  </div>
+</div>
+
+<!-- ================= JS ================= -->
+<script>
+const contractSelect = document.getElementById('contract');
+const rentDisplay = document.getElementById('rent');
+const monthsDisplay = document.getElementById('contract_months');
+const totalDisplay = document.getElementById('total');
+const payMonthsInput = document.getElementById('pay_months');
+const amountInput = document.getElementById('amount_paid');
+
+let rent = 0;
+
+function calculateMonths(start, end) {
+    if (!start || !end) return 0;
+
+    const s = new Date(start);
+    const e = new Date(end);
+
+    let months = (e.getFullYear() - s.getFullYear()) * 12;
+    months += (e.getMonth() - s.getMonth());
+
+    return months > 0 ? months : 0;
+}
+
+function updateTotal() {
+    const months = parseInt(payMonthsInput.value) || 0;
+    const total = months * rent;
+
+    totalDisplay.textContent = total;
+
+    // auto fill amount
+    amountInput.value = total;
+}
+
+contractSelect.addEventListener('change', function () {
+
+    const opt = this.options[this.selectedIndex];
+
+    rent = parseFloat(opt.dataset.rent || 0);
+
+    const start = opt.dataset.start;
+    const end = opt.dataset.end;
+
+    const contractMonths = calculateMonths(start, end);
+
+    rentDisplay.textContent = rent;
+    monthsDisplay.textContent = contractMonths;
+
+    // auto fill months
+    payMonthsInput.value = contractMonths;
+
+    updateTotal();
+});
+
+payMonthsInput.addEventListener('input', updateTotal);
+
+</script>
+
+{% endblock %}

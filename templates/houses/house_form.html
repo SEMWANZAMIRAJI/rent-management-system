@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="form-wrapper">
+
+<div class="form-card">
+
+<h2 class="text-xl font-bold mb-6 text-center">Add Property</h2>
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+<div>
+<label class="label">House Name</label>
+<input type="text" name="house_number" class="input">
+</div>
+
+<div>
+<label class="label">Location</label>
+<input type="text" name="location" class="input">
+</div>
+
+<div>
+<label class="label">Rooms</label>
+<input type="number" name="total_rooms" class="input">
+</div>
+
+<div>
+<label class="label">Rent Price</label>
+<input type="number" name="rent_price" class="input">
+</div>
+
+</div>
+
+<button class="btn mt-4">Save Property</button>
+
+</form>
+
+</div>
+</div>
+
+{% endblock %}

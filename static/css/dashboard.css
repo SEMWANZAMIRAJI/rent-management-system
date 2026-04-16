@@ -1,0 +1,115 @@
+/* BODY */
+body {
+    font-family: 'Jost', sans-serif;
+    background: linear-gradient(135deg, #C1B6AD, #A78266);
+}
+
+/* SIDEBAR */
+.sidebar {
+    background: rgba(0,0,0,0.35);
+    backdrop-filter: blur(12px);
+}
+
+/* MENU */
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    border-radius: 10px;
+    transition: 0.3s;
+    color: white;
+}
+
+.menu-item:hover {
+    background: rgba(255,255,255,0.15);
+}
+
+/* SUBMENU */
+.submenu-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 30px;
+    font-size: 14px;
+    color: white;
+}
+
+.submenu-item:hover {
+    background: rgba(255,255,255,0.1);
+    border-radius: 8px;
+}
+
+/* CARDS */
+.card {
+    background: rgba(255,255,255,0.85);
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+
+
+
+
+/* TABLE */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    text-align: left;
+    padding: 10px;
+    color: #555;
+}
+
+td {
+    padding: 10px;
+}
+
+tr {
+    border-bottom: 1px solid #eee;
+}
+
+.form-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.form-card {
+    width: 100%;
+    max-width: 700px;
+    background: white;
+    padding: 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+}
+
+.input {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    font-size: 14px;
+}
+
+.label {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 4px;
+    display: block;
+}
+
+.btn {
+    background: #A78266;
+    color: white;
+    padding: 10px;
+    border-radius: 8px;
+    width: 100%;
+}
+
+.btn:hover {
+    background: #8e6b52;
+}

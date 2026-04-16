@@ -1,0 +1,266 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="max-w-5xl mx-auto">
+
+    <!-- HEADER -->
+    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+
+        <div>
+            <h1 class="text-2xl md:text-3xl font-bold text-gray-800">
+                Payment Details
+            </h1>
+            <p class="text-gray-500 text-sm">
+                Complete payment receipt & tenant history
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-2">
+
+            <a href="{% url 'payments:list' %}"
+               class="px-4 py-2 border rounded-lg hover:bg-gray-100 text-sm">
+               ← Back
+            </a>
+
+            <button onclick="printReceipt()"
+                    class="bg-gray-800 text-white px-4 py-2 rounded-lg hover:bg-black text-sm">
+                Print
+            </button>
+
+            {% if request.user.userprofile.role == "landlord" %}
+            <a href="{% url 'payments:edit' payment.id %}"
+               class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm">
+               Edit
+            </a>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <!-- RECEIPT -->
+    <div id="receiptArea" class="bg-white rounded-2xl shadow border overflow-hidden">
+
+        <!-- TOP -->
+        <div class="bg-green-600 text-white px-6 py-5">
+
+            <div class="flex flex-col md:flex-row justify-between gap-4">
+
+                <div>
+                    <h2 class="text-xl font-bold">Payment Receipt</h2>
+                    <p class="text-sm opacity-90">
+                        Elshaddai Property Management
+                    </p>
+                </div>
+
+                <div class="text-sm md:text-right">
+                    <p><strong>Receipt #:</strong> PAY-{{ payment.id }}</p>
+                    <p><strong>Date:</strong> {{ payment.payment_date }}</p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- BODY -->
+        <div class="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+
+            <!-- LEFT -->
+            <div class="space-y-4">
+
+                <div class="border rounded-xl p-4">
+                    <h3 class="font-semibold mb-3 text-gray-700">
+                        Tenant Information
+                    </h3>
+
+                    <p><strong>Name:</strong> {{ payment.contract.tenant.full_name }}</p>
+
+                    {% if payment.contract.tenant.phone %}
+                    <p><strong>Phone:</strong> {{ payment.contract.tenant.phone }}</p>
+                    {% endif %}
+
+                    {% if payment.contract.tenant.email %}
+                    <p><strong>Email:</strong> {{ payment.contract.tenant.email }}</p>
+                    {% endif %}
+                </div>
+
+                <div class="border rounded-xl p-4">
+                    <h3 class="font-semibold mb-3 text-gray-700">
+                        Property Info
+                    </h3>
+
+                    <p><strong>House:</strong> {{ payment.contract.house.house_number }}</p>
+
+                    {% if payment.contract.house.location %}
+                    <p><strong>Location:</strong> {{ payment.contract.house.location }}</p>
+                    {% endif %}
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+            <div class="space-y-4">
+
+                <div class="border rounded-xl p-4">
+                    <h3 class="font-semibold mb-3 text-gray-700">
+                        Payment Info
+                    </h3>
+
+                    <p>
+                        <strong>Amount Paid:</strong>
+                        <span class="text-green-600 font-bold text-xl">
+                            TZS {{ payment.amount_paid }}
+                        </span>
+                    </p>
+
+                    <p><strong>Month:</strong> {{ payment.month }}</p>
+                    <p><strong>Method:</strong> {{ payment.method|title }}</p>
+                    <p><strong>Date Paid:</strong> {{ payment.payment_date }}</p>
+                </div>
+
+                <div class="border rounded-xl p-4 bg-gray-50">
+                    <h3 class="font-semibold mb-2 text-gray-700">
+                        Contract Info
+                    </h3>
+
+                    <p><strong>Contract ID:</strong> CTR-{{ payment.contract.id }}</p>
+                    <p><strong>Rent:</strong> TZS {{ payment.contract.rent_amount }}</p>
+
+                    <p class="mt-2">
+                        <strong>Period:</strong>
+                    </p>
+
+                    <p class="text-sm text-gray-600">
+                        {{ payment.contract.start_date }} → {{ payment.contract.end_date }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+        <div class="border-t px-6 py-4 text-sm text-gray-500 flex flex-col md:flex-row justify-between gap-2">
+            <span>Generated by Elshaddai System</span>
+            <span>Status: <span class="text-green-600 font-medium">Paid</span></span>
+        </div>
+
+    </div>
+
+    <!-- HISTORY -->
+    <div class="mt-8 bg-white rounded-2xl shadow border p-6">
+
+        <div class="flex flex-col md:flex-row justify-between md:items-center gap-3 mb-5">
+            <div>
+                <h2 class="text-xl font-bold text-gray-800">
+                    Payment History
+                </h2>
+                <p class="text-sm text-gray-500">
+                    Previous payments by this tenant
+                </p>
+            </div>
+
+            <div class="text-green-600 font-bold">
+                Total Paid: TZS {{ total_paid }}
+            </div>
+        </div>
+
+        <!-- DESKTOP -->
+        <div class="hidden md:block overflow-x-auto">
+            <table class="min-w-full text-sm">
+                <thead class="bg-gray-100">
+                    <tr>
+                        <th class="px-4 py-2 text-left">Month</th>
+                        <th class="px-4 py-2 text-left">Amount</th>
+                        <th class="px-4 py-2 text-left">Method</th>
+                        <th class="px-4 py-2 text-left">Date</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for item in history %}
+                    <tr class="border-b hover:bg-gray-50">
+                        <td class="px-4 py-2">{{ item.month }}</td>
+                        <td class="px-4 py-2">TZS {{ item.amount_paid }}</td>
+                        <td class="px-4 py-2">{{ item.method }}</td>
+                        <td class="px-4 py-2">{{ item.payment_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- MOBILE -->
+        <div class="md:hidden space-y-3">
+            {% for item in history %}
+            <div class="border rounded-xl p-4">
+                <div class="flex justify-between">
+                    <strong>{{ item.month }}</strong>
+                    <span class="text-green-600 font-semibold">
+                        TZS {{ item.amount_paid }}
+                    </span>
+                </div>
+
+                <div class="text-sm text-gray-600 mt-2">
+                    <p>Method: {{ item.method }}</p>
+                    <p>Date: {{ item.payment_date }}</p>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+    </div>
+
+</div>
+
+<!-- PRINT -->
+<script>
+function printReceipt() {
+    const content = document.getElementById("receiptArea").innerHTML;
+
+    const win = window.open('', '', 'width=900,height=700');
+
+    win.document.write(`
+        <html>
+        <head>
+            <title>Payment Receipt</title>
+            <style>
+                body{
+                    font-family: Arial;
+                    padding:30px;
+                    color:#111;
+                }
+                .bg-green-600{
+                    background:#16a34a;
+                    color:white;
+                    padding:20px;
+                }
+                .grid{
+                    display:grid;
+                    grid-template-columns:1fr 1fr;
+                    gap:20px;
+                }
+                .border{
+                    border:1px solid #ddd;
+                    padding:15px;
+                    border-radius:10px;
+                }
+                .text-green-600{
+                    color:green;
+                    font-weight:bold;
+                }
+            </style>
+        </head>
+        <body>
+            ${content}
+        </body>
+        </html>
+    `);
+
+    win.document.close();
+    win.focus();
+    win.print();
+    win.close();
+}
+</script>
+
+{% endblock %}

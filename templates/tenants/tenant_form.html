@@ -1,0 +1,66 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="form-wrapper">
+
+  <div class="form-card">
+
+    <h2 class="text-xl font-bold mb-6 text-center">
+      {% if object %} Edit Tenant {% else %} Add Tenant {% endif %}
+    </h2>
+
+    <form method="POST">
+      {% csrf_token %}
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+
+        <div>
+          <label class="label">Full Name</label>
+          <input type="text" name="full_name" class="input"
+            value="{% if object %}{{ object.full_name }}{% endif %}">
+        </div>
+
+        <div>
+          <label class="label">Phone</label>
+          <input type="text" name="phone" class="input"
+            value="{% if object %}{{ object.phone }}{% endif %}">
+        </div>
+
+        <div>
+          <label class="label">Email</label>
+          <input type="email" name="email" class="input"
+            value="{% if object %}{{ object.email }}{% endif %}">
+        </div>
+
+        <div>
+          <label class="label">House</label>
+          <select name="property" class="input">
+            <option value="">Select House</option>
+            {% for house in houses %}
+              <option value="{{ house.id }}"
+                {% if object and object.property and object.property.id == house.id %}selected{% endif %}>
+                {{ house.house_number }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div>
+          <label class="label">Room Number</label>
+          <input type="text" name="room_number" class="input"
+            value="{% if object %}{{ object.room_number }}{% endif %}">
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn mt-6 w-full">
+        {% if object %} Update Tenant {% else %} Save Tenant {% endif %}
+      </button>
+
+    </form>
+
+  </div>
+
+</div>
+
+{% endblock %}

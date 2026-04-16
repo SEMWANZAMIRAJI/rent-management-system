@@ -1,0 +1,75 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex justify-between items-center mb-6 flex-wrap gap-3">
+  <h1 class="text-2xl font-bold">Houses</h1>
+
+  <a href="{% url 'houses:add' %}"
+     class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
+    + Add House
+  </a>
+</div>
+
+<!-- 💻 DESKTOP TABLE -->
+<div class="hidden md:block card overflow-x-auto bg-white rounded shadow">
+
+<table class="w-full">
+
+  <thead class="bg-gray-100">
+    <tr>
+      <th class="px-4 py-2 text-left">Name</th>
+      <th class="px-4 py-2 text-left">Location</th>
+      <th class="px-4 py-2 text-left">Rooms</th>
+      <th class="px-4 py-2 text-left">Rent</th>
+    </tr>
+  </thead>
+
+  <tbody>
+
+    {% for house in houses %}
+    <tr class="border-b hover:bg-gray-50">
+
+      <td class="px-4 py-2">{{ house.house_number }}</td>
+      <td class="px-4 py-2">{{ house.location }}</td>
+      <td class="px-4 py-2">{{ house.total_rooms }}</td>
+      <td class="px-4 py-2">{{ house.rent_price }}</td>
+
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="4" class="text-center py-4 text-gray-500">
+        No houses found
+      </td>
+    </tr>
+    {% endfor %}
+
+  </tbody>
+
+</table>
+
+</div>
+
+<!-- 📱 MOBILE CARDS -->
+<div class="md:hidden space-y-4">
+
+{% for house in houses %}
+<div class="bg-white shadow rounded p-4 border">
+
+  <div class="flex justify-between">
+    <h2 class="font-bold">{{ house.house_number }}</h2>
+    <span class="text-sm text-gray-500">{{ house.location }}</span>
+  </div>
+
+  <div class="mt-2 text-sm text-gray-700 space-y-1">
+    <p><strong>Rooms:</strong> {{ house.total_rooms }}</p>
+    <p><strong>Rent:</strong> {{ house.rent_price }}</p>
+  </div>
+
+</div>
+{% empty %}
+<p class="text-center text-gray-500">No houses found</p>
+{% endfor %}
+
+</div>
+
+{% endblock %}

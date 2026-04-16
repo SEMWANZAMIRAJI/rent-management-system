@@ -1,0 +1,170 @@
+/* ================= GLOBAL FONT ================= */
+
+body{
+    font-family:"Jost",sans-serif;
+
+    background:linear-gradient(135deg,#C1B6AD,#A78266);
+    min-height:100vh;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    padding:20px;
+}
+
+
+/* ================= GLASS CARD ================= */
+
+.glass-card{
+    background:rgba(255,255,255,0.18);
+    backdrop-filter:blur(14px);
+    -webkit-backdrop-filter:blur(14px);
+
+    border-radius:22px;
+
+    border:1px solid rgba(255,255,255,0.25);
+}
+
+
+/* ================= LOGO BOX ================= */
+
+.logo-box{
+    background:#5F7877;
+}
+
+
+/* ================= TITLES ================= */
+
+.title-main{
+    font-weight:700;
+    letter-spacing:1px;
+    color:#ffffff;
+
+    font-size:42px;
+}
+
+.subtitle{
+    color:#F8EFE4;
+
+    font-size:16px;
+}
+
+
+/* ================= INPUT FIELDS ================= */
+
+.input-field{
+
+    background:rgba(255,255,255,0.25);
+
+    border:1px solid rgba(255,255,255,0.35);
+
+    font-size:17px;
+
+    color:#ffffff;
+
+    transition:all .3s ease;
+
+}
+
+.input-field::placeholder{
+    color:#F8EFE4;
+    opacity:.9;
+}
+
+.input-field:focus{
+
+    border-color:#5F7877;
+
+    box-shadow:0 0 0 2px rgba(95,120,119,.4);
+
+    outline:none;
+
+}
+
+
+/* ================= LOGIN BUTTON ================= */
+
+.login-btn{
+
+    background:#5F7877;
+
+    font-size:18px;
+
+    transition:all .3s ease;
+
+}
+
+.login-btn:hover{
+
+    background:#A78266;
+
+    transform:translateY(-2px);
+
+}
+
+
+
+/* ================= RESPONSIVE DESIGN ================= */
+
+
+/* LAPTOP */
+@media (max-width:1200px){
+
+.title-main{
+    font-size:36px;
+}
+
+}
+
+
+/* TABLET */
+
+@media (max-width:768px){
+
+.title-main{
+    font-size:32px;
+}
+
+.subtitle{
+    font-size:15px;
+}
+
+.input-field{
+    font-size:16px;
+}
+
+.login-btn{
+    font-size:17px;
+}
+
+}
+
+
+/* MOBILE */
+
+@media (max-width:480px){
+
+.title-main{
+    font-size:28px;
+}
+
+.subtitle{
+    font-size:15px;
+}
+
+.input-field{
+    font-size:16px;
+    padding:14px;
+}
+
+.login-btn{
+    font-size:16px;
+    padding:14px;
+}
+
+.glass-card{
+    padding:30px;
+}
+
+}

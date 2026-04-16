@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+{% block content %}
+
+<div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-3">
+  <h1 class="text-3xl font-bold">Contracts</h1>
+
+  {% if request.user.userprofile.role == "landlord" %}
+  <a href="{% url 'contracts:add' %}"
+     class="bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded shadow">
+    + Add Contract
+  </a>
+  {% endif %}
+</div>
+
+<!-- DESKTOP -->
+<div class="hidden md:block card overflow-x-auto bg-white rounded shadow">
+
+<table class="min-w-full divide-y divide-gray-200">
+
+  <thead class="bg-gray-50">
+    <tr>
+      <th class="px-4 py-2 text-left text-sm">Tenant</th>
+      <th class="px-4 py-2 text-left text-sm">House</th>
+      <th class="px-4 py-2 text-left text-sm">Rent</th>
+      <th class="px-4 py-2 text-left text-sm">Start</th>
+      <th class="px-4 py-2 text-left text-sm">End</th>
+      <th class="px-4 py-2 text-center text-sm">Actions</th>
+    </tr>
+  </thead>
+
+  <tbody>
+    {% for c in contracts %}
+    <tr class="hover:bg-gray-50">
+
+      <td class="px-4 py-2">{{ c.tenant.full_name }}</td>
+      <td class="px-4 py-2">{{ c.house.house_number }}</td>
+      <td class="px-4 py-2">{{ c.rent_amount }}</td>
+      <td class="px-4 py-2">{{ c.start_date }}</td>
+      <td class="px-4 py-2">{{ c.end_date }}</td>
+
+      <td class="px-4 py-2">
+        <div class="flex gap-2 justify-center">
+
+          <!-- VIEW = HISTORY -->
+          <a href="{% url 'contracts:detail' c.id %}"
+             class="text-gray-600 text-xs px-3 py-1 border rounded">
+             View History
+          </a>
+
+          {% if request.user.userprofile.role == "landlord" %}
+
+          <a href="{% url 'contracts:edit' c.id %}"
+             class="text-blue-600 text-xs px-3 py-1 border rounded">
+             Edit
+          </a>
+
+          <a href="{% url 'contracts:delete' c.id %}"
+             class="text-red-600 text-xs px-3 py-1 border rounded">
+             Delete
+          </a>
+
+          {% endif %}
+
+        </div>
+      </td>
+
+    </tr>
+    {% empty %}
+    <tr>
+      <td colspan="6" class="text-center py-6">No contracts available</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+
+</table>
+</div>
+
+<!-- MOBILE -->
+<div class="md:hidden space-y-4">
+
+{% for c in contracts %}
+<div class="bg-white shadow rounded p-4 border">
+
+  <div class="flex justify-between">
+    <h2 class="font-bold">{{ c.tenant.full_name }}</h2>
+    <span class="text-sm text-gray-500">{{ c.house.house_number }}</span>
+  </div>
+
+  <div class="mt-2 text-sm">
+    <p><strong>Rent:</strong> {{ c.rent_amount }}</p>
+    <p><strong>Start:</strong> {{ c.start_date }}</p>
+    <p><strong>End:</strong> {{ c.end_date }}</p>
+  </div>
+
+  <div class="mt-4 flex gap-2">
+
+    <!-- VIEW HISTORY -->
+    <a href="{% url 'contracts:detail' c.id %}"
+       class="text-gray-600 text-xs px-3 py-1 border rounded">
+       View History
+    </a>
+
+    {% if request.user.userprofile.role == "landlord" %}
+
+    <a href="{% url 'contracts:edit' c.id %}"
+       class="text-blue-600 text-xs px-3 py-1 border rounded">
+       Edit
+    </a>
+
+    <a href="{% url 'contracts:delete' c.id %}"
+       class="text-red-600 text-xs px-3 py-1 border rounded">
+       Delete
+    </a>
+
+    {% endif %}
+
+  </div>
+
+</div>
+{% endfor %}
+
+</div>
+
+{% endblock %}
