@@ -146,11 +146,11 @@ class DashboardView(LoginRequiredMixin, View):
             contracts = Contract.objects.filter(tenant=tenant_profile)
             total_contracts = contracts.count()
             pending_payments = Payment.objects.filter(
-                tenant=tenant_profile, month=current_month
+                contract__tenant=tenant_profile, month=current_month
             ).count()
             monthly_revenue = Payment.objects.filter(
-                tenant=tenant_profile, month=current_month
-            ).aggregate(total=models.Sum('amount_paid'))['total'] or 0
+                contract__tenant=tenant_profile, month=current_month
+            ).aggregate(total=Sum('amount_paid'))['total'] or 0
 
             context = {
                 "role": "tenant",
