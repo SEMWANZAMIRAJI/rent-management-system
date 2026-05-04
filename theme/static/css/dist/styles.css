@@ -145,7 +145,6 @@
   }
   img, svg, video, canvas, audio, iframe, embed, object {
     display: block;
-    vertical-align: middle;
   }
   img, video {
     max-width: 100%;
@@ -239,7 +238,7 @@
       text-align: center;
       vertical-align: middle;
       outline-offset: 2px;
-      webkit-user-select: none;
+      -webkit-user-select: none;
       user-select: none;
       padding-inline: var(--btn-p);
       color: var(--btn-fg);
@@ -579,7 +578,7 @@
     }
     .input:has(> input[type="date"]) :where(input[type="date"]) {
       display: inline-flex;
-      webkit-appearance: none;
+      -webkit-appearance: none;
       appearance: none;
     }
     .input:has(> input[type="date"]) input[type="date"]::-webkit-calendar-picker-indicator {
