@@ -44,12 +44,13 @@
 
         <!-- Rent -->
         <div>
-          <label class="font-medium">Rent Amount</label>
+          <label class="font-medium">Rent Amount For Month</label>
           <input type="number" name="rent_amount" id="rentInput"
                  class="w-full border p-2 rounded"
                  value="{% if object %}{{ object.rent_amount }}{% endif %}">
         </div>
 
+        
         <!-- MONTHS (IMPORTANT FIX) -->
         <div>
           <label class="font-medium">Contract Months</label>
@@ -58,6 +59,13 @@
                  value="{% if object %}{{ object.months }}{% endif %}"
                  placeholder="e.g 12">
         </div>
+
+          <div>
+        <label class="font-medium">Total Rent</label>
+          <input type="number" id="totalRent"
+            class="w-full border p-2 rounded bg-gray-100"
+            readonly>
+      </div>
 
         <!-- START DATE -->
         <div>
@@ -168,6 +176,29 @@ document.addEventListener("DOMContentLoaded", function () {
 
     start.addEventListener("change", calcMonths);
     end.addEventListener("change", calcMonths);
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const rentInput = document.getElementById("rentInput");
+    const monthsInput = document.getElementById("months");
+    const totalInput = document.getElementById("totalRent");
+
+    function calculateTotal() {
+        let rent = parseFloat(rentInput.value);
+        let months = parseInt(monthsInput.value);
+
+        if (!rent || !months) {
+            totalInput.value = "";
+            return;
+        }
+
+        totalInput.value = rent * months;
+    }
+
+    rentInput.addEventListener("input", calculateTotal);
+    monthsInput.addEventListener("input", calculateTotal);
 });
 </script>
 {% endblock %}

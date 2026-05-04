@@ -10,10 +10,12 @@ class Payment(models.Model):
     method = models.CharField(max_length=50,null=True,blank=True)
     # tenant = models.ForeignKey(Tenant,on_delete=models.CASCADE,null=True,blank=True)
     @property
-    def tenant(self):
-     return self.contract.tenant
+    def total_months(self):
+        return (self.contract.end_date.year - self.contract.start_date.year) * 12 + \
+               (self.contract.end_date.month - self.contract.start_date.month)
+
     @property
-    def house(self):
-        return self.contract.house
+    def total_rent(self):
+        return self.total_months * self.amount_paid
     def __str__(self):
-        return f"{self.tenant} - {self.amount_paid}"
+        return f"{self.contract.tenant} - {self.amount_paid}"

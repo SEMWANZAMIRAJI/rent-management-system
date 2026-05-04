@@ -19,17 +19,18 @@
           <select id="contract" name="contract" class="input w-full">
             <option value="">Select Contract</option>
 
-            {% for c in contracts %}
-            <option value="{{ c.id }}"
-                data-rent="{{ c.rent_amount }}"
-                data-start="{{ c.start_date }}"
-                data-end="{{ c.end_date }}"
-                {% if object and object.contract.id == c.id %}selected{% endif %}>
+           {% for c in contracts %}
+<option value="{{ c.id }}"
+  data-rent="{{ c.rent_amount }}"
+  data-start="{{ c.start_date|date:'Y-m-d' }}"
+  data-end="{{ c.end_date|date:'Y-m-d' }}"
+  data-months="{{ c.total_months }}"
+  data-total="{{ c.total_rent }}">
 
-                {{ c.tenant.full_name }} - {{ c.house.house_number }}
+  {{ c.tenant.full_name }} - {{ c.house.house_number }}
 
-            </option>
-            {% endfor %}
+</option>
+{% endfor %}
 
           </select>
         </div>

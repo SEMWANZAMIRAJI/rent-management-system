@@ -1,4 +1,4 @@
-import datetime
+from datetime import datetime
 
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
@@ -60,53 +60,49 @@ class ContractCreateView(CreateView):
         context["houses"] = House.objects.all()
         return context
 
+    from datetime import datetime
+
     def post(self, request, *args, **kwargs):
         tenant_id = request.POST.get("tenant")
         house_id = request.POST.get("house")
-        rent_amount = request.POST.get("rent_amount")
-        start_date = request.POST.get("start_date")
-        end_date = request.POST.get("end_date")
+        months = request.POST.get("months")
 
         errors = []
 
-        # REQUIRED VALIDATION
         if not tenant_id:
             errors.append("Tenant is required")
         if not house_id:
             errors.append("House is required")
 
-        # AUTO RENT (IMPORTANT FIX)
+        # GET HOUSE RENT
         if house_id:
             try:
                 house = House.objects.get(id=house_id)
-                rent_amount = house.rent_price   # overwrite manual input
+                rent_amount = house.rent_price
             except House.DoesNotExist:
-                errors.append("Selected house does not exist")
+                errors.append("House not found")
 
-        # DATE VALIDATION
-        if not start_date:
-            errors.append("Start date is required")
-        if not end_date:
-            errors.append("End date is required")
+        # VALIDATE MONTHS
+        if not months:
+            errors.append("Months required")
+        else:
+            months = int(months)
 
-        if start_date and end_date:
-            try:
-                s = datetime.strptime(start_date, "%Y-%m-%d").date()
-                e = datetime.strptime(end_date, "%Y-%m-%d").date()
+        # AUTO DATES
+        from datetime import date
+        start_date = date.today()
 
-                if s > e:
-                    errors.append("Start date cannot be greater than end date")
+        end_date = date(
+            start_date.year + (start_date.month + months - 1) // 12,
+            (start_date.month + months - 1) % 12 + 1,
+            start_date.day
+        )
 
-            except ValueError:
-                errors.append("Invalid date format")
-
-        # STOP IF ERRORS
         if errors:
             for e in errors:
                 messages.error(request, e)
             return redirect("contracts:add")
 
-        # CREATE CONTRACT (CLEAN)
         Contract.objects.create(
             tenant_id=tenant_id,
             house_id=house_id,
@@ -118,6 +114,7 @@ class ContractCreateView(CreateView):
         messages.success(request, "Contract created successfully!")
         return redirect("contracts:list")
 
+    
 # ---------------- UPDATE ----------------
 class ContractUpdateView(UpdateView):
     model = Contract

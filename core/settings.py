@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-d%6yeda2(%ko((fes1n2dv0k9p!+q_+buo2bx=2^d)58*9pfuv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG =True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -131,7 +131,8 @@ STATIC_URL = 'static/'
 
 
 STATICFILES_DIRS = [
-    BASE_DIR / "static"
+    BASE_DIR / "static",
+    
 ]
 
 TAILWIND_APP_NAME = 'theme'
