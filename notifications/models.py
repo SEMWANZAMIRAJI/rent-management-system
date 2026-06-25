@@ -1,6 +1,6 @@
 from django.db import models
-from tenants.models import Tenant
 from django.contrib.auth.models import User
+
 class Notification(models.Model):
 
     message = models.TextField()

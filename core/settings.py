@@ -10,7 +10,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-d%6yeda2(%ko((fes1n2dv0k9p!+q_+buo2bx=2^d)58*9pfuv'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG =False
+DEBUG =True
 
 ALLOWED_HOSTS = [
     "127.0.0.1",
@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'theme',
-    'tailwind',
+    # 'tailwind',
     'django.contrib.staticfiles',
     'tenants',
     'houses',
@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'rent_system_db',
         'USER': 'postgres',
         'PASSWORD': '1234',
-        'HOST': 'localhost',
+        'HOST': 'postgres_db',
         'PORT': '5432',
     }
 }
@@ -134,6 +134,7 @@ STATICFILES_DIRS = [
     BASE_DIR / "static",
     
 ]
-
+# 🔥 ADD THIS LINE (MUHIMU)
+STATIC_ROOT = BASE_DIR / "staticfiles"
 TAILWIND_APP_NAME = 'theme'
 NPM_BIN_PATH = r"C:\Program Files\nodejs\npm.cmd"

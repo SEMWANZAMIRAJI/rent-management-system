@@ -1,26 +1,21 @@
-from datetime import datetime
-
 from django.shortcuts import redirect
 from django.urls import reverse_lazy
-
-from payments.models import Payment
 from .models import Contract
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView,DetailView
 from tenants.models import Tenant
 from houses.models import House
 from django.contrib import messages
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
-from openpyxl import Workbook
-from django.views import View
-from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
-import csv
-
-# ---------------- LIST ----------------
 from django.db.models import Max
+from datetime import date
+from django.utils.dateparse import parse_date
+from calendar import monthrange
+# ---------------- LIST ----------------
+
 
 class ContractListView(ListView):
     model = Contract
@@ -47,7 +42,6 @@ class ContractListView(ListView):
         ).select_related("tenant", "house").order_by('-id')
 
 
-
 class ContractCreateView(CreateView):
     model = Contract
     fields = ['tenant', 'house', 'rent_amount', 'start_date', 'end_date']
@@ -60,49 +54,53 @@ class ContractCreateView(CreateView):
         context["houses"] = House.objects.all()
         return context
 
-    from datetime import datetime
-
     def post(self, request, *args, **kwargs):
         tenant_id = request.POST.get("tenant")
         house_id = request.POST.get("house")
         months = request.POST.get("months")
 
         errors = []
+        rent_amount = None
 
+        # validation
         if not tenant_id:
             errors.append("Tenant is required")
+
         if not house_id:
             errors.append("House is required")
 
-        # GET HOUSE RENT
-        if house_id:
-            try:
-                house = House.objects.get(id=house_id)
-                rent_amount = house.rent_price
-            except House.DoesNotExist:
-                errors.append("House not found")
+        # house check
+        try:
+            house = House.objects.get(id=house_id)
+            rent_amount = house.rent_price
+        except:
+            errors.append("Invalid house selected")
 
-        # VALIDATE MONTHS
-        if not months:
-            errors.append("Months required")
-        else:
+        # months safe conversion
+        try:
             months = int(months)
-
-        # AUTO DATES
-        from datetime import date
-        start_date = date.today()
-
-        end_date = date(
-            start_date.year + (start_date.month + months - 1) // 12,
-            (start_date.month + months - 1) % 12 + 1,
-            start_date.day
-        )
+            if months <= 0:
+                errors.append("Months must be greater than 0")
+        except:
+            errors.append("Invalid months value")
 
         if errors:
             for e in errors:
                 messages.error(request, e)
             return redirect("contracts:add")
 
+        # dates safe
+        start_date = date.today()
+
+        year = start_date.year + (start_date.month + months - 1) // 12
+        month = (start_date.month + months - 1) % 12 + 1
+
+        last_day = monthrange(year, month)[1]
+        day = min(start_date.day, last_day)
+
+        end_date = date(year, month, day)
+
+        # create
         Contract.objects.create(
             tenant_id=tenant_id,
             house_id=house_id,
@@ -113,7 +111,6 @@ class ContractCreateView(CreateView):
 
         messages.success(request, "Contract created successfully!")
         return redirect("contracts:list")
-
     
 # ---------------- UPDATE ----------------
 class ContractUpdateView(UpdateView):
@@ -186,8 +183,6 @@ class ContractDetailView(LoginRequiredMixin, DetailView):
         ).order_by('-id')
 
         return context
-
-
 
 
 class ContractPDFView(View):
