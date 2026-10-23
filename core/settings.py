@@ -80,7 +80,7 @@ DATABASES = {
         'NAME': 'rent_system_db',
         'USER': 'postgres',
         'PASSWORD': '1234',
-        'HOST': 'postgres_db',
+        'HOST': '127.0.0.1',
         'PORT': '5432',
     }
 }

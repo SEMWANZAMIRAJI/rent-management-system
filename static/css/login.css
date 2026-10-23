@@ -3,7 +3,7 @@
 body{
     font-family:"Jost",sans-serif;
 
-    background:linear-gradient(135deg,#C1B6AD,#A78266);
+    background:linear-gradient(135deg,#C1B6AD,#e4d8cf);
     min-height:100vh;
 
     display:flex;
@@ -17,13 +17,13 @@ body{
 /* ================= GLASS CARD ================= */
 
 .glass-card{
-    background:rgba(255,255,255,0.18);
+    background:rgba(221, 213, 213, 0.959);
     backdrop-filter:blur(14px);
     -webkit-backdrop-filter:blur(14px);
 
     border-radius:22px;
 
-    border:1px solid rgba(255,255,255,0.25);
+    border:1px solid rgb(221, 214, 214);
 }
 
 
